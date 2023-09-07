@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
@@ -24,6 +25,7 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class TextEditor extends JFrame implements ActionListener {
 
@@ -120,7 +122,33 @@ public class TextEditor extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == openItem) {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setCurrentDirectory(new File("."));
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Files","txt");
+            fileChooser.setFileFilter(filter);
 
+            int response = fileChooser.showOpenDialog(null);
+
+            if (response == JFileChooser.APPROVE_OPTION) {
+                File file = new File(fileChooser.getSelectedFile().getAbsolutePath());
+                Scanner fileIn = null;
+
+                try {
+                    fileIn = new Scanner(file);
+                    if (file.isFile()) {
+                        while (fileIn.hasNextLine()) {
+                            String line = fileIn.nextLine()+"\n";
+                            textArea.append(line);
+                        }
+                    }
+                } catch (FileNotFoundException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+                finally {
+                    fileIn.close();
+                }
+            }
         }
 
         if (e.getSource() == saveItem) {
